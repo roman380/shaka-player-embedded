@@ -1,10 +1,10 @@
 cmake_minimum_required(VERSION 3.2)
+cmake_policy(SET CMP0074 OLD)
 
 include(cmake/HunterGate.cmake)
 HunterGate(
-    URL "https://github.com/ruslo/hunter/archive/v0.23.155.tar.gz"
-    SHA1 "6421d63cc4fd78b8622e863c6b1dcabce98e1216"
-    LOCAL
+    URL "https://github.com/ruslo/hunter/archive/v0.23.165.tar.gz"
+    SHA1 "5a73f91df5f6109c0bb1104d0c0ee423f7bece79"
 )
 
 project(shaka_player_embedded VERSION 0.1.0)
@@ -437,8 +437,8 @@ find_package(CURL CONFIG REQUIRED)
 target_link_libraries(shaka_player_embedded PUBLIC CURL::libcurl)
 
 hunter_add_package(libxml2)
-find_package(libxml-2.0 CONFIG REQUIRED)
-target_link_libraries(shaka_player_embedded PUBLIC PkgConfig::libxml-2.0)
+find_package(libxml2 CONFIG REQUIRED)
+target_link_libraries(shaka_player_embedded libxml2::libxml2)
 
 hunter_add_package(SDL2)
 find_package(SDL2 CONFIG REQUIRED)
