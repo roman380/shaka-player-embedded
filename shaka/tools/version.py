@@ -71,8 +71,9 @@ def ParseVersion(version_str):
   Returns:
     The parsed version, as a 4-tuple of numbers.
   """
+  # print('version_str', version_str)
   match = re.match(
-      r'^v(\d+)\.(\d+)\.(\d+)(-beta(\d*))?(-(\d+)-g[0-9a-f]+)?(-dirty)?$',
+      r'^v(\d+)\.(\d+)\.(\d+)(-beta-p(\d*))?(-(\d+)-g[0-9a-f]+)?(-dirty)?$',
       version_str)
   if not match:
     raise ValueError('Invalid version format: ' + version_str)
@@ -80,6 +81,7 @@ def ParseVersion(version_str):
   minor = int(match.group(2))
   revision = int(match.group(3))
   tag = 0
+  # print('major', major, 'minor', minor, 'revision', revision)
   if any(v > _MAX_VERSION for v in (major, minor, revision)):
     raise ValueError('Version number too large: ' + version_str)
   if major == 0 and minor == 0 and revision == 0:
@@ -89,8 +91,10 @@ def ParseVersion(version_str):
     # If this is a pre-release version, reduce the numbers so the release
     # version will be larger than this number.
     beta_version = int(match.group(5) or 1)
-    if beta_version == 0 or beta_version > _MAX_BETA_VERSION:
-      raise ValueError('Invalid beta version number: ' + version_str)
+    # print(match.group(5), 'beta_version', beta_version, '_MAX_BETA_VERSION', _MAX_BETA_VERSION)
+    # if beta_version == 0 or beta_version > _MAX_BETA_VERSION:
+    #   raise ValueError('Invalid beta version number: ' + version_str)
+    beta_version = 1
     tag = beta_version << 13
 
     if revision != 0:
