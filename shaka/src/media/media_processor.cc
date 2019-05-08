@@ -52,7 +52,7 @@ std::string ErrStr(int code) {
 
   const char* prefix = code < 0 ? "-" : "";
   return util::StringPrintf("%s0x%08x: %s", prefix, abs(code),
-                            av_err2str(code));
+                            "TODO"); //av_err2str(code));
 }
 
 /**
@@ -724,8 +724,9 @@ class MediaProcessor::Impl {
       }
       av_encryption_init_info_free(info);
 
-      av_stream_remove_side_data(demuxer_ctx_->streams[0],
-                                 AV_PKT_DATA_ENCRYPTION_INIT_INFO);
+	  // TODO: Replacement for av_stream_remove_side_data? Check FFmpeg trunk first
+      //av_stream_remove_side_data(demuxer_ctx_->streams[0],
+      //                           AV_PKT_DATA_ENCRYPTION_INIT_INFO);
     }
   }
 
