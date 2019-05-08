@@ -25,9 +25,38 @@
 #  include <libgen.h>
 #endif
 
+#include <windows.h>
+#include <shlwapi.h>
+#pragma comment(lib, "shlwapi.lib")
+
+#pragma comment(lib, "avutil.lib")
+#pragma comment(lib, "avformat.lib")
+#pragma comment(lib, "avcodec.lib")
+#pragma comment(lib, "swscale.lib")
+#pragma comment(lib, "swresample.lib")
+
 #ifdef USING_V8
 #  include <v8.h>
 #endif
+
+#define SDL_MAIN_HANDLED
+
+////////////////////////////////////////////////////////////
+// 
+
+// 1. Add FFmpeg path to project demo, Linker, General, Additional Library Directories
+//
+//    %(AdditionalLibraryDirectories);temporary\ffmpeg-4.1.3-win64\lib
+
+// 2. Change libcurl to standalone build with debug information, if required in project demo, Linker, Input, Additional Dependencies
+//    also note additional API reference below for standalone build
+//
+//    ..\shaka-player-embedded_root\_Base\5a73f91\7f18d51\9c5d832\Install\lib\libcurld.lib
+//    ..\curl\builds\libcurl-vc15-x64-debug-static-ipv6-sspi-winssl\lib\libcurl_a_debug.lib
+
+#pragma comment(lib, "Normaliz.lib")
+
+////////////////////////////////////////////////////////////
 
 #include <SDL2/SDL.h>
 #include <gflags/gflags.h>
@@ -56,7 +85,10 @@ std::string DirName(const char* arg0) {
   std::string copy = arg0;
   return dirname(&copy[0]);
 #  else
-#    error "Not implemented for Windows"
+  CHAR copy[MAX_PATH];
+  strcpy_s(copy, arg0);
+  PathRemoveFileSpecA(copy);
+  return copy;
 #  endif
 }
 #endif  // !OS_IOS
@@ -148,7 +180,7 @@ class DemoApp : shaka::Player::Client {
 
   bool LoadAsset() {
     const std::string uri =
-        "//storage.googleapis.com/shaka-demo-assets/sintel-mp4-only/dash.mpd";
+		"//storage.googleapis.com/shaka-demo-assets/sintel-mp4-only/dash.mpd";
     auto results = player_.Load(uri);
     if (results.has_error()) {
       LOG(ERROR) << "Error in load: " << results.error();
@@ -178,8 +210,11 @@ class DemoApp : shaka::Player::Client {
         SDL_GetWindowSize(window_, &win_width, &win_height);
         shaka::ShakaRect rect = shaka::FitVideoToWindow(
             video_width, video_height, win_width, win_height);
-        SDL_Rect sdl_rect = {
-            .x = rect.x, .y = rect.y, .w = rect.w, .h = rect.h};
+        SDL_Rect sdl_rect;
+        sdl_rect.x = rect.x;
+        sdl_rect.y = rect.y;
+        sdl_rect.w = rect.w;
+        sdl_rect.h = rect.h;
         SDL_RenderCopy(renderer_, texture, nullptr, &sdl_rect);
       }
       SDL_RenderPresent(renderer_);
@@ -214,16 +249,48 @@ class DemoApp : shaka::Player::Client {
 }  // namespace
 
 
-int main(int argc, char** argv) {
+//int main(int argc, char** argv) {
+//  // Init flags and logging.
+//  FLAGS_alsologtostderr = true;
+//  gflags::ParseCommandLineFlags(&argc, &argv, true);
+//  google::InitGoogleLogging(argv[0]);
+//
+//#ifdef USING_V8
+//  v8::V8::SetFlagsFromString(FLAGS_v8_flags.c_str(), FLAGS_v8_flags.length());
+//#endif
+//
+//  DemoApp demo(argv[0]);
+//  return demo.Run() ? 0 : 1;
+//}
+
+#define _SILENCE_CXX17_CODECVT_HEADER_DEPRECATION_WARNING
+
+#include <codecvt>
+
+std::wstring ConvertString(const std::string& value)
+{
+    std::wstring_convert<std::codecvt_utf8_utf16<wchar_t>> convert;
+    return convert.from_bytes(value);
+}
+std::string ConvertString(const std::wstring& value)
+{
+    std::wstring_convert<std::codecvt_utf8_utf16<wchar_t>> convert;
+    return convert.to_bytes(value);
+}
+
+int main() {
+  INT argc;
+  LPWSTR* argv = CommandLineToArgvW(GetCommandLineW(), &argc);
   // Init flags and logging.
   FLAGS_alsologtostderr = true;
-  gflags::ParseCommandLineFlags(&argc, &argv, true);
-  google::InitGoogleLogging(argv[0]);
+  //gflags::ParseCommandLineFlags(&argc, &argv, true);
+  std::string application(ConvertString(argv[0]));
+  google::InitGoogleLogging(application.c_str());
 
 #ifdef USING_V8
   v8::V8::SetFlagsFromString(FLAGS_v8_flags.c_str(), FLAGS_v8_flags.length());
 #endif
 
-  DemoApp demo(argv[0]);
+  DemoApp demo(application.c_str());
   return demo.Run() ? 0 : 1;
 }
