@@ -81,9 +81,9 @@ void NetworkThread::AbortRequest(RefPtr<js::XMLHttpRequest> request) {
 
 void NetworkThread::ThreadMain() {
   while (!shutdown_.load(std::memory_order_acquire)) {
-    fd_set fdread;
-    fd_set fdwrite;
-    fd_set fdexc;
+    fd_set fdread = {};
+    fd_set fdwrite = {};
+    fd_set fdexc = {};
     long timeout_ms = -1;  // NOLINT
     int maxfd = -1;
     bool no_handles;
