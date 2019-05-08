@@ -110,3 +110,96 @@ DocumentFactory::DocumentFactory() {
 }  // namespace dom
 }  // namespace js
 }  // namespace shaka
+
+////////////////////////////////////////////////////////////
+
+#include "..\..\core\ref_ptr.h"
+#include "..\..\mapping\backing_object.h"
+
+#include "attr.h"
+#include "character_data.h"
+#include "dom_exception.h"
+#include "dom_parser.h"
+
+#include "..\console.h"
+#include "..\debug.h"
+#include "..\location.h"
+#include "..\navigator.h"
+#include "..\test_type.h"
+#include "..\xml_http_request.h"
+#include "..\url.h"
+#include "..\test_type.h"
+
+#include "..\events\progress_event.h"
+
+namespace shaka {
+
+#define DEFINE_MEMORY_TRACEABLE_CASTS(Type) \
+	template <> \
+	memory::Traceable* TryCastToMemoryTraceable(Type* value) { \
+		return static_cast<memory::Traceable*>(value); \
+	}
+
+DEFINE_MEMORY_TRACEABLE_CASTS(ByteBuffer)
+DEFINE_MEMORY_TRACEABLE_CASTS(Promise)
+
+#define DEFINE_BACKINGOBJECT_NAME(Type) \
+	template <> \
+	std::string GetBackingObjectName(const Type* value) { \
+		return value->name(); \
+	} \
+	template <> \
+	std::string GetBackingObjectName(const RefPtr<Type>* value) { \
+		return value->name(); \
+	}
+
+#define DEFINE_BACKINGOBJECT_CASTS(Type) \
+	DEFINE_MEMORY_TRACEABLE_CASTS(Type) \
+	DEFINE_BACKINGOBJECT_NAME(Type) \
+	template <> \
+	BackingObject* TryCastToBackingObject(Type* value) { \
+		return static_cast<BackingObject*>(value); \
+	} \
+	template <> \
+	Type* TryCastFromBackingObject(BackingObject* value) { \
+		return static_cast<Type*>(value); \
+	}
+
+DEFINE_BACKINGOBJECT_CASTS(BackingObject)
+
+DEFINE_BACKINGOBJECT_NAME(Any)
+DEFINE_BACKINGOBJECT_NAME(ByteBuffer)
+DEFINE_BACKINGOBJECT_NAME(ByteString)
+DEFINE_BACKINGOBJECT_NAME(Callback)
+
+DEFINE_BACKINGOBJECT_NAME(js::TestTypeOptions)
+
+DEFINE_BACKINGOBJECT_CASTS(js::Console)
+DEFINE_BACKINGOBJECT_CASTS(js::Debug)
+DEFINE_BACKINGOBJECT_CASTS(js::Location)
+DEFINE_BACKINGOBJECT_CASTS(js::Navigator)
+DEFINE_BACKINGOBJECT_CASTS(js::TestType)
+DEFINE_BACKINGOBJECT_CASTS(js::XMLHttpRequest)
+DEFINE_BACKINGOBJECT_CASTS(js::VTTCue)
+DEFINE_BACKINGOBJECT_CASTS(js::URL)
+
+DEFINE_BACKINGOBJECT_CASTS(js::events::EventTarget)
+DEFINE_BACKINGOBJECT_CASTS(js::events::Event)
+DEFINE_BACKINGOBJECT_CASTS(js::events::ProgressEvent)
+
+DEFINE_BACKINGOBJECT_CASTS(js::dom::Node)
+DEFINE_BACKINGOBJECT_CASTS(js::dom::Text)
+DEFINE_BACKINGOBJECT_CASTS(js::dom::Comment)
+DEFINE_BACKINGOBJECT_CASTS(js::dom::Element)
+DEFINE_BACKINGOBJECT_CASTS(js::dom::DOMException)
+DEFINE_BACKINGOBJECT_CASTS(js::dom::CharacterData)
+DEFINE_BACKINGOBJECT_CASTS(js::dom::DOMParser)
+DEFINE_BACKINGOBJECT_CASTS(js::dom::Attr)
+DEFINE_BACKINGOBJECT_CASTS(js::dom::ContainerNode)
+DEFINE_BACKINGOBJECT_CASTS(js::dom::Document)
+
+#undef DEFINE_MEMORY_TRACEABLE_CASTS
+#undef DEFINE_BACKINGOBJECT_NAME
+#undef DEFINE_BACKINGOBJECT_CASTS
+
+}

@@ -29,6 +29,12 @@
 namespace shaka {
 
 template <typename T>
+memory::Traceable* TryCastToMemoryTraceable(T*);
+
+template <typename T>
+T* TryCastFromBackingObject(BackingObject*);
+
+template <typename T>
 class Member;
 
 /**
@@ -132,8 +138,10 @@ class RefPtr {
     // the object in between the calls.
     static_assert(std::is_convertible<U*, T*>::value,
                   "U must be implicitly convertible to T");
-    memory::ObjectTracker::Instance()->AddRef(other);
-    memory::ObjectTracker::Instance()->RemoveRef(ptr_);
+	memory::Traceable* to_add = TryCastToMemoryTraceable(other);
+	memory::Traceable* to_remove = TryCastToMemoryTraceable(ptr_);
+	memory::ObjectTracker::Instance()->AddRef(to_add);
+    memory::ObjectTracker::Instance()->RemoveRef(to_remove);
     ptr_ = other;
   }
 
@@ -165,7 +173,10 @@ struct impl::ConvertHelper<RefPtr<T>> {
     if (!IsDerivedFrom(ptr, TypeName<T>::name()))
       return false;
 
-    dest->reset(static_cast<T*>(ptr));
+    //dest->reset(static_cast<T*>(ptr));
+	T* dest2 = TryCastFromBackingObject<T>(ptr);
+	assert(dest2);
+	dest->reset(dest2);
     return true;
   }
 

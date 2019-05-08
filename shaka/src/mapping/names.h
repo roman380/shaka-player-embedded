@@ -26,6 +26,9 @@ namespace shaka {
 
 class BackingObject;
 
+template <typename T>
+std::string GetBackingObjectName(const T*);
+
 /**
  * Contains a single method |name| that returns a string for the name of the
  * type. For custom types, it requires a static method |name| to exist on
@@ -46,7 +49,7 @@ class BackingObject;
 template <typename T, typename = void>
 struct TypeName {
   static std::string name() {
-    return T::name();
+    return GetBackingObjectName<T>(nullptr);  // T::name();
   }
 };
 

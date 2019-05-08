@@ -256,3 +256,76 @@ MediaSourceFactory::MediaSourceFactory() {
 }  // namespace mse
 }  // namespace js
 }  // namespace shaka
+
+////////////////////////////////////////////////////////////
+
+#include "..\..\core\ref_ptr.h"
+#include "..\..\mapping\backing_object.h"
+
+#include "time_ranges.h"
+
+#include "..\events\media_key_message_event.h"
+#include "..\eme\media_keys.h"
+#include "..\eme\media_key_session.h"
+#include "..\eme\media_key_system_access.h"
+
+namespace shaka {
+
+#define DEFINE_MEMORY_TRACEABLE_CASTS(Type) \
+	template <> \
+	memory::Traceable* TryCastToMemoryTraceable(Type* value) { \
+		return static_cast<memory::Traceable*>(value); \
+	}
+
+//template <typename T>
+//std::string GetBackingObjectName(const T*) {
+//	return "";
+//}
+
+#define DEFINE_BACKINGOBJECT_NAME(Type) \
+	template <> \
+	std::string GetBackingObjectName(const Type* value) { \
+		return value->name(); \
+	} \
+	template <> \
+	std::string GetBackingObjectName(const RefPtr<Type>* value) { \
+		return value->name(); \
+	}
+
+#define DEFINE_BACKINGOBJECT_CASTS(Type) \
+	DEFINE_MEMORY_TRACEABLE_CASTS(Type) \
+	DEFINE_BACKINGOBJECT_NAME(Type) \
+	template <> \
+	BackingObject* TryCastToBackingObject(Type* value) { \
+		return static_cast<BackingObject*>(value); \
+	} \
+	template <> \
+	Type* TryCastFromBackingObject(BackingObject* value) { \
+		return static_cast<Type*>(value); \
+	}
+
+DEFINE_BACKINGOBJECT_NAME(js::events::MediaEncryptedEventInit)
+DEFINE_BACKINGOBJECT_NAME(js::events::MediaKeyMessageEventInit)
+
+DEFINE_BACKINGOBJECT_CASTS(js::events::MediaEncryptedEvent)
+DEFINE_BACKINGOBJECT_CASTS(js::events::MediaKeyMessageEvent)
+
+DEFINE_BACKINGOBJECT_NAME(js::eme::MediaKeySystemConfiguration)
+
+DEFINE_BACKINGOBJECT_CASTS(js::mse::TimeRanges)
+DEFINE_BACKINGOBJECT_CASTS(js::mse::MediaError)
+DEFINE_BACKINGOBJECT_CASTS(js::mse::SourceBuffer)
+DEFINE_BACKINGOBJECT_CASTS(js::mse::TextTrack)
+DEFINE_BACKINGOBJECT_CASTS(js::mse::HTMLVideoElement)
+DEFINE_BACKINGOBJECT_CASTS(js::mse::MediaSource)
+
+DEFINE_BACKINGOBJECT_CASTS(js::eme::MediaKeys)
+DEFINE_BACKINGOBJECT_CASTS(js::eme::MediaKeySession)
+DEFINE_BACKINGOBJECT_CASTS(js::eme::MediaKeySystemAccess)
+
+#undef DEFINE_MEMORY_TRACEABLE_CASTS
+#undef DEFINE_BACKINGOBJECT_NAME
+#undef DEFINE_BACKINGOBJECT_CASTS
+
+}
+

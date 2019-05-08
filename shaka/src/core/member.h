@@ -30,6 +30,9 @@
 
 namespace shaka {
 
+template <typename T>
+BackingObject* TryCastToBackingObject(T*);
+
 /**
  * Defines a smart pointer type used to store references to GC types.
  *
@@ -144,14 +147,17 @@ class Member : public GenericConverter, public memory::Traceable {
   }
 
   ReturnVal<JsValue> ToJsValue() const override {
-    if (empty())
-      return JsNull();
-    else
-      return ptr_->JsThis();
+    if (!empty()) {
+      //return ptr_->JsThis();
+      BackingObject* object = TryCastToBackingObject(ptr_);
+	  if(object)
+	    return object->JsThis();
+    }
+    return JsNull();
   }
 
   void Trace(memory::HeapTracer* tracer) const override {
-    tracer->Trace(ptr_);
+    //tracer->Trace(ptr_);
   }
 
  private:
