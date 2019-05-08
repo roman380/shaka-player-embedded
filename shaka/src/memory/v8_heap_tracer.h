@@ -67,7 +67,7 @@ class V8HeapTracer : public v8::EmbedderHeapTracer {
 
 
   /** Called by V8 when a GC is aborted. */
-  void AbortTracing() override;
+  // void AbortTracing() override;
 
   /** Called by V8 when a GC pass begins. */
   void TracePrologue() override;
@@ -79,7 +79,7 @@ class V8HeapTracer : public v8::EmbedderHeapTracer {
    * Called by V8 when entering the final marking phase.  There will be no more
    * incremental marking calls.
    */
-  void EnterFinalPause() override;
+  void EnterFinalPause(EmbedderStackState stack_state) override;
 
   /**
    * Called by V8 to tell us about wrapper objects.  The pair contains the
@@ -93,7 +93,9 @@ class V8HeapTracer : public v8::EmbedderHeapTracer {
    * time to complete, telling V8 whether there is more work to do.
    * @return True if there is more work to do, false if done.
    */
-  bool AdvanceTracing(double deadline_ms, AdvanceTracingActions) override;
+  bool AdvanceTracing(double deadline_ms) override;
+
+  bool IsTracingDone() override { return true; }
 
  private:
   InternalFieldList fields_;

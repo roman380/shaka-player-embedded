@@ -29,11 +29,11 @@ V8HeapTracer::V8HeapTracer(HeapTracer* heap_tracer,
 
 V8HeapTracer::~V8HeapTracer() {}
 
-void V8HeapTracer::AbortTracing() {
-  VLOG(2) << "GC run aborted";
-  heap_tracer_->ResetState();
-  fields_.clear();
-}
+//void V8HeapTracer::AbortTracing() {
+//  VLOG(2) << "GC run aborted";
+//  heap_tracer_->ResetState();
+//  fields_.clear();
+//}
 
 void V8HeapTracer::TracePrologue() {
   VLOG(2) << "GC run started";
@@ -48,7 +48,7 @@ void V8HeapTracer::TraceEpilogue() {
   heap_tracer_->ResetState();
 }
 
-void V8HeapTracer::EnterFinalPause() {}
+void V8HeapTracer::EnterFinalPause(EmbedderStackState stack_state) {}
 
 void V8HeapTracer::RegisterV8References(
     const InternalFieldList& internal_fields) {
@@ -56,8 +56,7 @@ void V8HeapTracer::RegisterV8References(
   fields_.insert(fields_.end(), internal_fields.begin(), internal_fields.end());
 }
 
-bool V8HeapTracer::AdvanceTracing(double /* deadline_ms */,
-                                  AdvanceTracingActions /* actions */) {
+bool V8HeapTracer::AdvanceTracing(double /* deadline_ms */) {
   VLOG(2) << "GC run step";
   util::Clock clock;
   const uint64_t start = clock.GetMonotonicTime();

@@ -145,10 +145,10 @@ class HeapTracer {
   template <size_t I, typename... Types>
   struct VariantHelper {
     static void Trace(HeapTracer* tracer, const variant<Types...>* variant) {
-      if (variant->index() == I)
-        tracer->Trace(&get<I>(*variant));
-      else
-        VariantHelper<I + 1, Types...>::Trace(tracer, variant);
+      //if (variant->index() == I)
+      //  tracer->Trace(&get<I>(*variant));
+      //else
+      //  VariantHelper<I + 1, Types...>::Trace(tracer, variant);
     }
   };
   template <typename... Types>
