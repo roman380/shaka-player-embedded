@@ -18,7 +18,8 @@ extern "C" {
 #include <libavutil/encryption_info.h>
 }
 
-#include <netinet/in.h>
+//#include <netinet/in.h>
+#include <winsock2.h>
 
 #include <limits>
 #include <vector>

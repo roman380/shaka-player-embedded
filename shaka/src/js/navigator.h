@@ -25,6 +25,8 @@
 #include "src/js/eme/media_key_system_configuration.h"
 
 // #define PLATFORM      // Defined by BUILD.gn
+#define PLATFORM        "Windows"
+
 #define APP_NAME        "Netscape"
 #define APP_CODE_NAME   "Mozilla"
 #define APP_VERSION     "5.0"

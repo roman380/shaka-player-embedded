@@ -18,6 +18,9 @@
 #include <string>
 #include <vector>
 
+#include <intsafe.h>
+typedef SSIZE_T ssize_t;
+
 #include "src/util/macros.h"
 
 namespace shaka {

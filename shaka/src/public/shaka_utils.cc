@@ -28,10 +28,12 @@ ShakaRect FitVideoToWindow(int video_width, int video_height, int window_width,
     scaled_width = static_cast<int>(video_width * height_scale);
     scaled_height = window_height;
   }
-  return {.x = (window_width - scaled_width) / 2 + window_x,
-          .w = scaled_width,
-          .y = (window_height - scaled_height) / 2 + window_y,
-          .h = scaled_height};
+  ShakaRect result;
+  result.x = (window_width - scaled_width) / 2 + window_x;
+  result.w = scaled_width;
+  result.y = (window_height - scaled_height) / 2 + window_y;
+  result.h = scaled_height;
+  return result;
 }
 
 }  // namespace shaka

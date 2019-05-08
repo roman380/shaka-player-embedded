@@ -15,7 +15,7 @@
 #include "src/core/network_thread.h"
 
 #include <curl/curl.h>
-#include <sys/select.h>
+//#include <sys/select.h>
 
 #include <algorithm>
 #include <cerrno>
@@ -133,8 +133,9 @@ void NetworkThread::ThreadMain() {
       std::unique_lock<Mutex> lock(mutex_);
       cond_.ResetAndWaitWhileUnlocked(lock);
     } else {
-      timeval timeout = {.tv_sec = timeout_ms / 1000,
-                         .tv_usec = (timeout_ms % 1000) * 1000};
+      timeval timeout;
+	  timeout.tv_sec = timeout_ms / 1000;
+	  timeout.tv_usec = (timeout_ms % 1000) * 1000;
       if (select(maxfd + 1, &fdread, &fdwrite, &fdexc, &timeout) < 0) {
         if (errno == EBADF) {
           // If another thread aborts the request, it will close the file

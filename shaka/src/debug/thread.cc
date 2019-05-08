@@ -32,7 +32,7 @@ void ThreadMain(const std::string& name, std::function<void()> callback) {
 #elif defined(OS_POSIX)
   pthread_setname_np(pthread_self(), name.c_str());
 #else
-#  error "Not implemented for Windows"
+  // SUGG: SetThreadDescription https://docs.microsoft.com/en-us/windows/desktop/api/processthreadsapi/nf-processthreadsapi-setthreaddescription
 #endif
 
 #ifdef DEBUG_DEADLOCKS

@@ -14,7 +14,8 @@
 
 #include "src/media/media_processor.h"
 
-#include <netinet/in.h>
+//#include <netinet/in.h>
+#include <winsock2.h>
 
 extern "C" {
 #include <libavcodec/avcodec.h>

@@ -422,7 +422,7 @@ AsyncResults<Player::LogLevel> Player::GetLogLevel(JsManager* engine) {
       return Error(ErrorType::BadMember,
                    "The variable 'shaka.log.currentLevel' is not found.");
     }
-    return static_cast<LogLevel>(NumberFromValue(current_level));
+    return static_cast<LogLevel>((uint8_t) NumberFromValue(current_level));
   };
   return JsManagerImpl::Instance()
       ->MainThread()

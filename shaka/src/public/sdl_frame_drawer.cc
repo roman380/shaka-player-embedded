@@ -16,6 +16,7 @@
 
 #include <list>
 #include <unordered_set>
+#include <algorithm> // std::min
 
 #include "src/util/macros.h"
 
