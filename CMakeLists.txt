@@ -1,6 +1,11 @@
 cmake_minimum_required(VERSION 3.2)
 cmake_policy(SET CMP0074 OLD)
 
+set(HUNTER_ROOT "$(PROJECT_SOURCE_DIR)/../../shaka-player-embedded_root")
+message(STATUS "Using HUNTER_ROOT: ${HUNTER_ROOT}")
+
+set(HUNTER_KEEP_PACKAGE_SOURCES YES)
+
 include(cmake/HunterGate.cmake)
 HunterGate(
     URL "https://github.com/ruslo/hunter/archive/v0.23.165.tar.gz"
@@ -9,7 +14,7 @@ HunterGate(
 
 project(shaka_player_embedded VERSION 0.1.0)
 
-option(SHAKA_PLAYER_EMBEDDED_BUILD_DEMO "Build demo" OFF)
+option(SHAKA_PLAYER_EMBEDDED_BUILD_DEMO "Build demo" ON)
 
 find_package(Python 2 REQUIRED)
 
@@ -379,12 +384,20 @@ if(APPLE)
   target_compile_options(
       shaka_player_embedded PRIVATE "-Wno-c++11-narrowing"
   )
+  target_compile_definitions(
+      shaka_player_embedded PUBLIC $<BUILD_INTERFACE:OS_POSIX>
+  )
+endif()
+
+if(WIN32)
+  target_compile_options(
+      shaka_player_embedded PRIVATE "/std:c++17"
+  )
 endif()
 
 target_compile_definitions(
     shaka_player_embedded
     PUBLIC
-    $<BUILD_INTERFACE:OS_POSIX>
     $<BUILD_INTERFACE:USING_V8>
     $<BUILD_INTERFACE:BUILDING_SHAKA>
 )
@@ -438,23 +451,26 @@ target_link_libraries(shaka_player_embedded PUBLIC CURL::libcurl)
 
 hunter_add_package(libxml2)
 find_package(libxml2 CONFIG REQUIRED)
-target_link_libraries(shaka_player_embedded libxml2::libxml2)
+target_link_libraries(shaka_player_embedded PUBLIC libxml2::libxml2)
 
 hunter_add_package(SDL2)
 find_package(SDL2 CONFIG REQUIRED)
 target_link_libraries(shaka_player_embedded PUBLIC SDL2::SDL2)
 
-hunter_add_package(ffmpeg)
-find_package(ffmpeg CONFIG REQUIRED)
-target_link_libraries(
-    shaka_player_embedded
-    PUBLIC
-    ffmpeg::avcodec
-    ffmpeg::avformat
-    ffmpeg::avutil
-    ffmpeg::swresample
-    ffmpeg::swscale
-)
+# hunter_add_package(ffmpeg)
+# find_package(ffmpeg CONFIG REQUIRED)
+# target_link_libraries(
+#     shaka_player_embedded
+#     PUBLIC
+#     ffmpeg::avcodec
+#     ffmpeg::avformat
+#     ffmpeg::avutil
+#     ffmpeg::swresample
+#     ffmpeg::swscale
+# )
+
+set(FFMPEG_ROOT "C:/Project/castlabs.com/shaka-player-embedded/temporary/ffmpeg-4.1.3-win64")
+target_include_directories(shaka_player_embedded PRIVATE "${FFMPEG_ROOT}/include")
 
 target_include_directories(
     shaka_player_embedded
